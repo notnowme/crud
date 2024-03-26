@@ -1,0 +1,28 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Test {
+  id Int @id @default(autoincrement())
+  name String
+}
+
+model User {
+  no Int @id @default(autoincrement())
+  id String @unique
+  nick String @unique
+  password String
+  created_at DateTime @default(now())
+}
+
+model Jwt_blacklist {
+  jwt String @unique
+}

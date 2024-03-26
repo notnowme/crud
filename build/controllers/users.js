@@ -1,5 +1,16 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.getUserInfo = exports.root = void 0;
+const db_1 = require("@/lib/db");
 /**
  * @swagger
  * paths:
@@ -39,9 +50,16 @@ Object.defineProperty(exports, "__esModule", { value: true });
  *                          ]
  *
  */
-const root = (req, res) => {
-    res.send('root로 들어옴22').status(200);
-};
+const root = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const result = yield db_1.db.test.findMany();
+        res.json(result).status(200);
+    }
+    catch (err) {
+        return res.send('error').status(400);
+    }
+});
+exports.root = root;
 /**
  * @swagger
  * /api/user/{user_id}:
@@ -74,14 +92,4 @@ const getUserInfo = (req, res) => {
     console.log(req.params.id);
     res.send('test').status(200);
 };
-function routes() {
-    return {
-        root: (req, res) => {
-            root(req, res);
-        },
-        getUserInfo: (req, res) => {
-            getUserInfo(req, res);
-        }
-    };
-}
-exports.default = routes();
+exports.getUserInfo = getUserInfo;

@@ -4,13 +4,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
-const user_1 = __importDefault(require("../controllers/user"));
+const users_1 = require("../controllers/users");
 // 라우터
 const router = express_1.default.Router();
-router.get('/', (req, res) => {
-    user_1.default.root(req, res);
-});
+router.get('/', users_1.getAllUsers);
 router.get('/:id', (req, res) => {
-    user_1.default.getUserInfo(req, res);
+    (0, users_1.getUserInfo)(req, res);
 });
 module.exports = router;
