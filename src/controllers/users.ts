@@ -1,10 +1,10 @@
-import { Request, Response } from "express";
+import { RequestHandler } from "express";
 import { db } from "../lib/db";
 import { verifyToken } from "../lib/jwt";
 import { JwtPayloadWithUserInfo } from "../types/global";
 import { ModifyUserNickDito } from "../interfaces/user";
 
-export const getAllUsers = async (req: Request, res: Response) => {
+export const getAllUsers: RequestHandler = async (req, res) => {
     try {
         const result = await db.user.findMany({
             select: {
@@ -26,7 +26,7 @@ export const getAllUsers = async (req: Request, res: Response) => {
  * @param req 
  * @param res 
  */
-export const getUserInfo = async (req: Request, res: Response) => {
+export const getUserInfo: RequestHandler = async (req, res) => {
     try {
         const { no } = req.params;
 
@@ -80,7 +80,7 @@ export const getUserInfo = async (req: Request, res: Response) => {
  * @param res 
  * @returns 
  */
-export const modifyUserNick = async(req: Request, res: Response) => {
+export const modifyUserNick: RequestHandler = async(req, res) => {
     // 인증 끝, 중복 끝.
     try {
         const { authorization: token } = req.headers;

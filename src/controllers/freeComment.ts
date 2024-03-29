@@ -1,11 +1,11 @@
-import { Request, Response } from "express";
+import { RequestHandler } from "express";
 import { verifyToken } from "../lib/jwt";
 import { JwtPayloadWithUserInfo } from "../types/global";
 
 import { db } from "../lib/db";
 import { CommentWriteDto } from "../interfaces/comment";
 
-export const commentFreeWrite = async (req: Request, res: Response) => {
+export const commentFreeWrite: RequestHandler = async (req, res) => {
     
     try {
         const { authorization: token } = req.headers;
@@ -41,7 +41,7 @@ export const commentFreeWrite = async (req: Request, res: Response) => {
 
 };
 
-export const commentFreeModify = async (req: Request, res: Response) => {
+export const commentFreeModify: RequestHandler = async (req, res) => {
     try {
         const { no: cmtNo } = req.params;
         const { authorization: token } = req.headers;
@@ -81,7 +81,7 @@ export const commentFreeModify = async (req: Request, res: Response) => {
     }
 };
 
-export const commentFreeDelete = async(req: Request, res: Response) => {
+export const commentFreeDelete: RequestHandler = async(req, res) => {
     try {
         const { no: cmtNo } = req.params;
         const { authorization: token } = req.headers;

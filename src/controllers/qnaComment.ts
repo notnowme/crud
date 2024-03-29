@@ -1,11 +1,11 @@
-import { Request, Response } from "express";
+import { RequestHandler } from "express";
 import { verifyToken } from "../lib/jwt";
 import { JwtPayloadWithUserInfo } from "../types/global";
 
 import { db } from "../lib/db";
 import { CommentWriteDto } from "../interfaces/comment";
 
-export const commentQnaWrite = async (req: Request, res: Response) => {
+export const commentQnaWrite: RequestHandler = async (req, res) => {
     
     try {
         const { authorization: token } = req.headers;
@@ -41,7 +41,7 @@ export const commentQnaWrite = async (req: Request, res: Response) => {
 
 };
 
-export const commentQnaModify = async (req: Request, res: Response) => {
+export const commentQnaModify: RequestHandler = async (req, res) => {
     try {
         const { no: cmtNo } = req.params;
         const { authorization: token } = req.headers;
@@ -81,7 +81,7 @@ export const commentQnaModify = async (req: Request, res: Response) => {
     }
 };
 
-export const commentQnaDelete = async(req: Request, res: Response) => {
+export const commentQnaDelete: RequestHandler = async(req, res) => {
     try {
         const { no: cmtNo } = req.params;
         const { authorization: token } = req.headers;

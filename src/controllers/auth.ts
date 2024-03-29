@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from "express";
+import { RequestHandler } from "express";
 import { db } from "../lib/db";
 import bcrypt from 'bcrypt';
 import { signJwtAccessToken, verifyToken } from "../lib/jwt";
@@ -11,7 +11,7 @@ type UserInfoWithToken = UserInfo & { token?: string }
 /**
  * 아이디 중복 확인
  */
-export const checkId = async (req: Request, res: Response, next: NextFunction) => {
+export const checkId: RequestHandler = async (req, res, next) => {
     try {
         const { id }: CheckIdDto = req.body;
 
@@ -38,7 +38,7 @@ export const checkId = async (req: Request, res: Response, next: NextFunction) =
 /**
  * 닉네임 중복 확인
  */
-export const checkNick = async (req: Request, res: Response, next: NextFunction) => {
+export const checkNick: RequestHandler = async (req, res, next) => {
     try {
         const { nick }: CheckNickDto = req.body;
 
@@ -63,7 +63,7 @@ export const checkNick = async (req: Request, res: Response, next: NextFunction)
 /**
  * 회원 가입
  */
-export const authJoin = async (req: Request, res: Response) => {
+export const authJoin: RequestHandler = async (req, res) => {
     try {
         const { id, nick, password }: AuthJoinDto = req.body;
 
@@ -92,7 +92,7 @@ export const authJoin = async (req: Request, res: Response) => {
 /**
  * 회원 탈퇴
  */
-export const authWithdraw = async (req: Request, res: Response) => {
+export const authWithdraw: RequestHandler = async (req, res) => {
     try {
         const { authorization: token } = req.headers;
 
@@ -126,7 +126,7 @@ export const authWithdraw = async (req: Request, res: Response) => {
 /**
  * 로그인
  */
-export const authLogin = async (req: Request, res: Response) => {
+export const authLogin: RequestHandler = async (req, res) => {
     try {
         const { id, password }: AuthLoginDto = req.body;
 
@@ -173,7 +173,7 @@ export const authLogin = async (req: Request, res: Response) => {
 /**
  * 로그아웃
  */
-export const authLogout = (req: Request, res: Response) => {
+export const authLogout: RequestHandler = (req, res) => {
     // jwt를 블랙리스트에 등록.
     // 로그아웃 처리 추가...
     return res.json({ ok: true }).status(200);

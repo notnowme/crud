@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { RequestHandler } from "express";
 import { verifyToken } from "../lib/jwt";
 import { JwtPayloadWithUserInfo } from "../types/global";
 
@@ -12,7 +12,7 @@ import { Prisma } from "@prisma/client";
  * @param res 
  * @returns 
  */
-export const boardGetAll = async (req: Request, res: Response) => {
+export const boardGetAll: RequestHandler = async (req, res) => {
     try {
         let { page } = req.query;
 
@@ -66,7 +66,7 @@ export const boardGetAll = async (req: Request, res: Response) => {
  * @param res 
  * @returns 
  */
-export const boardGetOne = async(req: Request, res: Response) => {
+export const boardGetOne: RequestHandler = async(req, res) => {
     try {
         const { no } = req.params;
         
@@ -118,7 +118,7 @@ export const boardGetOne = async(req: Request, res: Response) => {
  * @param res 
  * @returns 
  */
-export const boardWrite = async(req: Request, res: Response) => {
+export const boardWrite: RequestHandler = async(req, res) => {
     try {
         const { title, content }: BoardWriteModifyDto = req.body;
 
@@ -154,7 +154,7 @@ export const boardWrite = async(req: Request, res: Response) => {
     }
 };
 
-export const boardModify = async (req: Request, res: Response) => {
+export const boardModify: RequestHandler = async (req, res) => {
     try {
         const { no: boardNo } = req.params;
         const { title, content }: BoardWriteModifyDto = req.body;
@@ -203,7 +203,7 @@ export const boardModify = async (req: Request, res: Response) => {
  * @param res 
  * @returns 
  */
-export const boardDelete = async (req: Request, res: Response) => {
+export const boardDelete: RequestHandler = async (req, res) => {
     try {
         const { no: boardNo } = req.params;
         if(!boardNo) return res.json({ok: false, message: 'Board No missing'}).status(400);
