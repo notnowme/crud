@@ -1,103 +1,20 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const auth_1 = require("../controllers/auth");
-const express_1 = __importDefault(require("express"));
-const token_1 = require("../lib/token");
-const router = express_1.default.Router();
+import express from "express";
+import { checkToken } from "../lib/token";
+import { commentFreeDelete, commentFreeModify, commentFreeWrite } from "../controllers/freeComment";
+
+const router = express.Router();
+
+
 /**
  * @swagger
- *  /api/auth/local/join:
+ *  /api/comment/free:
  *      post:
- *          summary: 회원가입
- *          tags:
- *              - Auth
- *          requestBody:
- *              required: true
- *              content:
- *                  application/json:
- *                      schema:
- *                          type: object
- *                          properties:
- *                             id:
- *                                type: string
- *                                description: 아이디
- *                                example: test01
- *                             nick:
- *                                type: string
- *                                description: 닉네임
- *                                example: 테스트01
- *                             password:
- *                                type: string
- *                                description: 비밀번호
- *                                example: password
- *
- *          responses:
- *              200:
- *                  description: 회원 가입 성공
- *                  content:
- *                      application/json:
- *                          schema:
- *                             type: object
- *                             properties:
- *                                ok:
- *                                   type: boolean
- *                                   description: true
- *              400:
- *                  description: 아이디 혹은 닉네임, 패스워드 미입력
- *                  content:
- *                      application/json:
- *                          schema:
- *                             type: object
- *                             properties:
- *                                ok:
- *                                   type: boolean
- *                                   description: 상태
- *                                   example: false
- *                                message:
- *                                   type: string
- *                                   example: PASSWORD missing
- *              409:
- *                  description: 아이디 혹은 닉네임 중복
- *                  content:
- *                      application/json:
- *                          schema:
- *                             type: object
- *                             properties:
- *                                ok:
- *                                   type: boolean
- *                                   description: 상태
- *                                   example: false
- *                                message:
- *                                   type: string
- *                                   example: ID exists!
- *              500:
- *                  description: 서버 오류
- *                  content:
- *                      application/json:
- *                          schema:
- *                             type: object
- *                             properties:
- *                                ok:
- *                                   type: boolean
- *                                   description: 상태
- *                                   example: false
- *                                message:
- *                                   type: string
- *                                   example: Internel Server Error
- */
-router.post('/local/join', auth_1.checkId, auth_1.checkNick, auth_1.authJoin); // 가입
-/**
- * @swagger
- *  /api/auth/local/withdraw:
- *      post:
- *          summary: 회원탈퇴
+ *          summary: 댓글 작성
  *          security:
  *              - Authorization: []
  *          tags:
- *              - Auth
+ *             - Comment
+ *               free
  *          parameters:
  *              - in: header
  *                name: Authorization
@@ -105,19 +22,52 @@ router.post('/local/join', auth_1.checkId, auth_1.checkNick, auth_1.authJoin); /
  *                schema:
  *                   type: string
  *                description: token 필요
+ *          requestBody:
+ *              required: true
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          type: object
+ *                          properties:
+ *                             boardNo:
+ *                                type: integer
+ *                                description: 게시글 번호
+ *                                example: 1
+ *                             content:
+ *                                type: string
+ *                                description: 내용
+ *                                example: 내용
  *          responses:
- *              200:
- *                  description: 회원 탈퇴 성공
+ *              201:
+ *                  description: 작성된 댓글 정보
  *                  content:
  *                      application/json:
  *                          schema:
  *                             type: object
+ *                             description: 작성된 게시글 정보
  *                             properties:
  *                                ok:
  *                                   type: boolean
- *                                   description: true
- *              404:
- *                  description: 아이디를 찾을 수 없음
+ *                                   description: 결과
+ *                                   example: true
+ *                                data:
+ *                                   type: object
+ *                                   description: 정보
+ *                                   example:
+ *                                              {
+ *                                                 "no": 1,
+ *                                                 "board_no": 1,
+ *                                                 "author_no": 1,
+ *                                                 "content": "내용",
+ *                                                 "created_at": "2024-03-28T01:48:30.473Z",
+ *                                                 "updated_at": "2024-03-28T01:48:30.473Z",
+ *                                                 "author": {
+ *                                                              "id": "test011",
+ *                                                              "nick": "테스트01"
+ *                                                           }
+ *                                              }
+ *              400:
+ *                  description: 내용 혹은 게시글 번호 없음
  *                  content:
  *                      application/json:
  *                          schema:
@@ -129,7 +79,7 @@ router.post('/local/join', auth_1.checkId, auth_1.checkNick, auth_1.authJoin); /
  *                                   example: false
  *                                message:
  *                                   type: string
- *                                   example: Cannot find User
+ *                                   example: Board No missing
  *              401:
  *                  description: 토큰 없음 혹은 위조, 만료
  *                  content:
@@ -159,106 +109,18 @@ router.post('/local/join', auth_1.checkId, auth_1.checkNick, auth_1.authJoin); /
  *                                   type: string
  *                                   example: Internel Server Error
  */
-router.post('/local/withdraw', token_1.checkToken, auth_1.authWithdraw); // 탈퇴
+router.post('/', checkToken, commentFreeWrite);
+
 /**
  * @swagger
- *  /api/auth/login:
- *      post:
- *          summary: 로그인
- *          tags:
- *              - Auth
- *          requestBody:
- *              required: true
- *              content:
- *                  application/json:
- *                      schema:
- *                          type: object
- *                          properties:
- *                             id:
- *                                type: string
- *                                description: 아이디
- *                                example: test01
- *                             password:
- *                                type: string
- *                                description: 비밀번호
- *                                example: password
- *          responses:
- *              200:
- *                  description: 로그인 성공
- *                  content:
- *                      application/json:
- *                          schema:
- *                             type: object
- *                             description: 회원 정보
- *                             example:
- *                                {"ok": true, "data": {"no": 1, "id": "test01", "nick": "테스트01", "token": "jwt token"} }
- *              400:
- *                  description: 아이디 혹은 비밀번호 미입력
- *                  content:
- *                      application/json:
- *                          schema:
- *                             type: object
- *                             properties:
- *                                ok:
- *                                   type: boolean
- *                                   description: 상태
- *                                   example: false
- *                                message:
- *                                   type: string
- *                                   example: ID missing
- *              401:
- *                  description: 비밀번호 틀림
- *                  content:
- *                      application/json:
- *                          schema:
- *                             type: object
- *                             properties:
- *                                ok:
- *                                   type: boolean
- *                                   description: 상태
- *                                   example: false
- *                                message:
- *                                   type: string
- *                                   example: Wrong Password
- *              404:
- *                  description: 아이디를 찾을 수 없음
- *                  content:
- *                      application/json:
- *                          schema:
- *                             type: object
- *                             properties:
- *                                ok:
- *                                   type: boolean
- *                                   description: 상태
- *                                   example: false
- *                                message:
- *                                   type: string
- *                                   example: Cannot find User
- *              500:
- *                  description: 서버 오류
- *                  content:
- *                      application/json:
- *                          schema:
- *                             type: object
- *                             properties:
- *                                ok:
- *                                   type: boolean
- *                                   description: 상태
- *                                   example: false
- *                                message:
- *                                   type: string
- *                                   example: Internel Server Error
- */
-router.post('/login', auth_1.authLogin); // 로그인
-/**
- * @swagger
- *  /api/auth/logout:
- *      post:
- *          summary: 로그아웃
+ *  /api/comment/free/{no}:
+ *      patch:
+ *          summary: 댓글 수정
  *          security:
  *              - Authorization: []
  *          tags:
- *              - Auth
+ *             - Comment
+ *               free
  *          parameters:
  *              - in: header
  *                name: Authorization
@@ -266,9 +128,53 @@ router.post('/login', auth_1.authLogin); // 로그인
  *                schema:
  *                   type: string
  *                description: token 필요
+ *              - in: path
+ *                name: no
+ *                type: integer
+ *                required: true
+ *                description: 댓글 번호
+ *          requestBody:
+ *              required: true
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          type: object
+ *                          properties:
+ *                             content:
+ *                                type: string
+ *                                description: 내용
+ *                                example: 내용
  *          responses:
- *              200:
- *                  description: 로그아웃 성공
+ *              201:
+ *                  description: 수정된 댓글 정보
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                             type: object
+ *                             description: 수정된 게시글 정보
+ *                             properties:
+ *                                ok:
+ *                                   type: boolean
+ *                                   description: 결과
+ *                                   example: true
+ *                                data:
+ *                                   type: object
+ *                                   description: 정보
+ *                                   example:
+ *                                              {
+ *                                                 "no": 1,
+ *                                                 "board_no": 1,
+ *                                                 "author_no": 1,
+ *                                                 "content": "내용",
+ *                                                 "created_at": "2024-03-28T01:48:30.473Z",
+ *                                                 "updated_at": "2024-03-28T01:48:30.473Z",
+ *                                                 "author": {
+ *                                                              "id": "test011",
+ *                                                              "nick": "테스트01"
+ *                                                           }
+ *                                              }
+ *              400:
+ *                  description: 내용 없음 혹은 작성자 불일치
  *                  content:
  *                      application/json:
  *                          schema:
@@ -276,7 +182,11 @@ router.post('/login', auth_1.authLogin); // 로그인
  *                             properties:
  *                                ok:
  *                                   type: boolean
- *                                   description: true
+ *                                   description: 상태
+ *                                   example: false
+ *                                message:
+ *                                   type: string
+ *                                   example: No Author
  *              401:
  *                  description: 토큰 없음 혹은 위조, 만료
  *                  content:
@@ -291,6 +201,20 @@ router.post('/login', auth_1.authLogin); // 로그인
  *                                message:
  *                                   type: string
  *                                   example: Unauthorized
+ *              404:
+ *                  description: 댓글 없음
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                             type: object
+ *                             properties:
+ *                                ok:
+ *                                   type: boolean
+ *                                   description: 상태
+ *                                   example: false
+ *                                message:
+ *                                   type: string
+ *                                   example: Not Found
  *              500:
  *                  description: 서버 오류
  *                  content:
@@ -306,5 +230,100 @@ router.post('/login', auth_1.authLogin); // 로그인
  *                                   type: string
  *                                   example: Internel Server Error
  */
-router.post('/logout', token_1.checkToken, token_1.jwtToBlack, auth_1.authLogout); // 로그아웃
+/**
+ * @swagger
+ *  /api/comment/free/{no}:
+ *      delete:
+ *          summary: 댓글 삭제
+ *          security:
+ *              - Authorization: []
+ *          tags:
+ *             - Comment
+ *               free
+ *          parameters:
+ *              - in: path
+ *                name: no
+ *                type: integer
+ *                required: true
+ *                description: 댓글 번호
+ *              - in: header
+ *                name: Authorization
+ *                required: true
+ *                schema:
+ *                   type: string
+ *                description: token 필요
+ *          responses:
+ *              200:
+ *                  description: 삭제 완료
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                             type: object
+ *                             description: 삭제 완료
+ *                             properties:
+ *                                ok:
+ *                                   type: boolean
+ *                                   description: 결과
+ *                                   example: true
+ *              400:
+ *                  description: 댓글 번호 없음 혹은 작성자와 일치하지 않음
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                             type: object
+ *                             properties:
+ *                                ok:
+ *                                   type: boolean
+ *                                   description: 상태
+ *                                   example: false
+ *                                message:
+ *                                   type: string
+ *                                   example: No Author
+ *              401:
+ *                  description: 토큰 없음 혹은 위조, 만료
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                             type: object
+ *                             properties:
+ *                                ok:
+ *                                   type: boolean
+ *                                   description: 상태
+ *                                   example: false
+ *                                message:
+ *                                   type: string
+ *                                   example: Unauthorized
+ *              404:
+ *                  description: 댓글 없음
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                             type: object
+ *                             properties:
+ *                                ok:
+ *                                   type: boolean
+ *                                   description: 상태
+ *                                   example: false
+ *                                message:
+ *                                   type: string
+ *                                   example: Not Found
+ *              500:
+ *                  description: 서버 오류
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                             type: object
+ *                             properties:
+ *                                ok:
+ *                                   type: boolean
+ *                                   description: 상태
+ *                                   example: false
+ *                                message:
+ *                                   type: string
+ *                                   example: Internel Server Error
+ */
+router
+    .patch('/:no', checkToken, commentFreeModify)
+    .delete('/:no', checkToken, commentFreeDelete);
+
 module.exports = router;

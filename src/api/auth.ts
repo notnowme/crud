@@ -1,14 +1,13 @@
 import {
     authJoin,
-    authJwtToBlack,
     authLogin,
     authLogout,
-    authToken,
     authWithdraw,
     checkId,
     checkNick
 } from "../controllers/auth";
 import express from "express";
+import { checkToken, jwtToBlack } from "../lib/token";
 
 const router = express.Router();
 
@@ -107,6 +106,7 @@ router.post('/local/join', checkId, checkNick, authJoin); // 가입
  *          parameters:
  *              - in: header
  *                name: Authorization
+ *                required: true
  *                schema:
  *                   type: string
  *                description: token 필요
@@ -164,7 +164,7 @@ router.post('/local/join', checkId, checkNick, authJoin); // 가입
  *                                   type: string
  *                                   example: Internel Server Error
  */
-router.post('/local/withdraw', authToken, authWithdraw); // 탈퇴
+router.post('/local/withdraw', checkToken, authWithdraw); // 탈퇴
 
 /**
  * @swagger
@@ -195,12 +195,9 @@ router.post('/local/withdraw', authToken, authWithdraw); // 탈퇴
  *                      application/json:
  *                          schema:
  *                             type: object
- *                             properties:
- *                                result:
- *                                   type: object
- *                                   description: 회원 정보
- *                                   example:
- *                                      {"no": 1, "id": "test01", "nick": "테스트01", "token": "jwt token"}
+ *                             description: 회원 정보
+ *                             example:
+ *                                {"ok": true, "data": {"no": 1, "id": "test01", "nick": "테스트01", "token": "jwt token"} }
  *              400:
  *                  description: 아이디 혹은 비밀번호 미입력
  *                  content:
@@ -272,6 +269,7 @@ router.post('/login', authLogin); // 로그인
  *          parameters:
  *              - in: header
  *                name: Authorization
+ *                required: true
  *                schema:
  *                   type: string
  *                description: token 필요
@@ -315,6 +313,6 @@ router.post('/login', authLogin); // 로그인
  *                                   type: string
  *                                   example: Internel Server Error
  */
-router.post('/logout', authToken, authJwtToBlack, authLogout); // 로그아웃
+router.post('/logout', checkToken, jwtToBlack, authLogout); // 로그아웃
 
 module.exports = router;

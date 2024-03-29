@@ -1,5 +1,7 @@
-import jwt, { JsonWebTokenError, JwtPayload } from 'jsonwebtoken';
+import jwt, { JsonWebTokenError } from 'jsonwebtoken';
 import { v4 as uuid } from 'uuid';
+import { JwtPayloadWithUserInfo } from '../types/global';
+
 
 type signOption = {
     expiresIn?: string | number;
@@ -17,7 +19,7 @@ const DEFAULT_SIGN_OPTION: signOption = {
  * @param options 
  * @returns 
  */
-export const signJwtAccessToken = (payload: JwtPayload, options: signOption = DEFAULT_SIGN_OPTION) => {
+export const signJwtAccessToken = (payload: JwtPayloadWithUserInfo, options: signOption = DEFAULT_SIGN_OPTION) => {
     const secret_key = process.env.SECRET_KEY;
     const token = jwt.sign(payload, secret_key!, options);
     return token;
@@ -32,7 +34,7 @@ export const verifyToken = (token: string) => {
     try {
         const secret_key = process.env.SECRET_KEY;
         const decoded = jwt.verify(token, secret_key!);
-        return decoded as JwtPayload;
+        return decoded as JwtPayloadWithUserInfo;
     } catch (err) {
         if(err instanceof JsonWebTokenError) {
             console.error(`[JWT VERIFY]`, err);

@@ -21,6 +21,68 @@ model User {
   nick String @unique
   password String
   created_at DateTime @default(now())
+
+  free_board Free_board[]
+  free_comments Free_comment[]
+
+  qna_board Qna_board[]
+  qna_comments Qna_comment[]
+}
+
+model Free_board {
+  no Int @id @default(autoincrement())
+
+  author_no Int
+  author User @relation(fields: [author_no], references: [no], onDelete: Cascade)
+
+  title String
+  content String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  comments Free_comment[]
+}
+
+model Free_comment {
+  no Int @id @default(autoincrement())
+
+  board_no Int
+  board Free_board @relation(fields: [board_no], references: [no], onDelete: Cascade)
+
+  author_no Int
+  author User @relation(fields: [author_no], references: [no], onDelete: Cascade)
+
+  content String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
+
+model Qna_board {
+  no Int @id @default(autoincrement())
+
+  author_no Int
+  author User @relation(fields: [author_no], references: [no], onDelete: Cascade)
+
+  title String
+  content String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  comments Qna_comment[]
+}
+
+model Qna_comment {
+  no Int @id @default(autoincrement())
+
+  board_no Int
+  board Qna_board @relation(fields: [board_no], references: [no], onDelete: Cascade)
+
+  author_no Int
+  author User @relation(fields: [author_no], references: [no], onDelete: Cascade)
+
+  content String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
 }
 
 model Jwt_blacklist {
