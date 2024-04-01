@@ -27,8 +27,8 @@ app.get('/', (req, res) => {
     res.send('CRUD API SERVER...').status(200);
 });
 
-app.listen(port, () => {
-    console.log('server is running...');
+const server = app.listen(port, () => {
+    // console.log('server is running...');
 });
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openapiSpec));
@@ -69,4 +69,9 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
 
 app.all('*', (req, res) => {
     res.json({ok: false, message: 'Method Not Allowed'}).status(405);
-})
+});
+
+export {
+    app,
+    server
+}

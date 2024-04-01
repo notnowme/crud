@@ -14,17 +14,20 @@ const router = express.Router();
 router.get('/', getAllUsers);
 /**
  * @swagger
- *  /api/users/{no}:
- *      get:
+ *  /api/users:
+ *      post:
  *          summary: 회원 정보
  *          tags:
  *             - Users
+ *          security:
+ *              - Authorization: []
  *          parameters:
- *              - in: path
- *                name: no
- *                type: integer
+ *              - in: header
+ *                name: Authorization
+ *                schema:
+ *                   type: string
  *                required: true
- *                description: 회원 번호  
+ *                description: token 필요
  *          responses:
  *              200:
  *                  description: 회원 정보
@@ -109,7 +112,7 @@ router.get('/', getAllUsers);
  */
 /**
  * @swagger
- *  /api/users/{no}:
+ *  /api/users:
  *      patch:
  *          summary: 닉네임 수정
  *          tags:
@@ -122,12 +125,7 @@ router.get('/', getAllUsers);
  *                schema:
  *                   type: string
  *                required: true
- *                description: token 필요
- *              - in: path
- *                name: no
- *                type: integer
- *                required: true
- *                description: 회원 번호         
+ *                description: token 필요      
  *          requestBody:
  *              required: true
  *              content:
@@ -208,7 +206,7 @@ router.get('/', getAllUsers);
  *                                   example: Internel Server Error
  */
 router
-    .get('/:no', getUserInfo) // 유저 정보
-    .patch('/:no', checkToken, checkNick, modifyUserNick); // 닉네임 수정
+    .post('/', getUserInfo) // 유저 정보
+    .patch('/', checkToken, checkNick, modifyUserNick); // 닉네임 수정
 
 module.exports = router;

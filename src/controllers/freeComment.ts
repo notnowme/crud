@@ -13,7 +13,15 @@ export const commentFreeWrite: RequestHandler = async (req, res) => {
 
         if(!boardNo) return res.json({ok: false, message: 'Board No missing'}).status(400);
         if(!content) return res.json({ok: false, message: 'CONTENT missing'}).status(400);
-        
+
+        const board = await db.free_board.findFirst({
+            where: {
+                no: boardNo
+            }
+        });
+
+        if(!board) return res.json({ok: false, message: 'Not Found'}).status(404);
+
         const { no: userNo } = verifyToken(token as string) as JwtPayloadWithUserInfo;
 
         const comment = await db.free_comment.create({

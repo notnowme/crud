@@ -28,20 +28,21 @@ export const getAllUsers: RequestHandler = async (req, res) => {
  */
 export const getUserInfo: RequestHandler = async (req, res) => {
     try {
-        const { no } = req.params;
+        const { authorization: token } = req.headers;
+        const { no } = verifyToken(token as string) as JwtPayloadWithUserInfo;
 
         if(!no) return res.json({ok: false, message: 'User No missing'}).status(400);
 
         const query = {
             where: {
-                author_no: parseInt(no)
+                author_no: no
             }
         };
 
         const [userInfo, freeBoardCount, qnaBoardCount, freeCommentCount, qnaCommentCount] = await db.$transaction([
             db.user.findFirst({
                 where: {
-                    no: parseInt(no)
+                    no: no
                 },
                 select: {
                     no: true,
@@ -84,13 +85,12 @@ export const modifyUserNick: RequestHandler = async(req, res) => {
     // 인증 끝, 중복 끝.
     try {
         const { authorization: token } = req.headers;
-        const { no } = req.params
+
         const { nick }: ModifyUserNickDito = req.body;
 
+        if(!nick) return res.json({ok: false, message: 'NICK missing'}).status(400);
         
-        if(!no) return res.json({ok: false, message: 'User No Missing'}).status(400);
-        
-        const { id } = verifyToken(token as string) as JwtPayloadWithUserInfo;
+        const { id, no } = verifyToken(token as string) as JwtPayloadWithUserInfo;
 
         const user = await db.user.findFirst({
             where: {
@@ -101,13 +101,13 @@ export const modifyUserNick: RequestHandler = async(req, res) => {
         if(!user) return res.json({ok: false, message: 'Cannot find User'}).status(400);
 
         // 토큰의 id에서 가져온 회원 번호와 params의 회원 번호 일치 확인
-        const checkIdAndNo = user.no === parseInt(no);
-
+        const checkIdAndNo = user.no === no;
+        console.log(user.no, no, checkIdAndNo);
         if(!checkIdAndNo) return res.json({ok: false, message: 'Unauthorized'}).status(401);
 
         const result = await db.user.update({
             where: {
-                no: parseInt(no)
+                no
             },
             data: {
                 nick: nick as string

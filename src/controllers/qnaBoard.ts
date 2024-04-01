@@ -26,7 +26,7 @@ export const boardGetAll: RequestHandler = async (req, res) => {
 
         const query: Prisma.Qna_boardFindManyArgs = {
             take: pageSize,
-            skip: lastNum <= 0 ? 1 : lastNum,
+            skip: lastNum <= 20 ? 0 : lastNum,
         }
         const [boards, boardsCount] = await db.$transaction([
             db.qna_board.findMany({
