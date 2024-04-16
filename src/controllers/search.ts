@@ -7,10 +7,10 @@ export const searchBoard = async (req: Request<{}, {}, {}, { board: 'free' | 'qn
     try {
         const { board, cat, key, page } = req.query
 
-        if (!board) return res.json({ ok: false, message: 'Board missing' }).status(400);
-        if (!cat) return res.json({ ok: false, message: 'Category missing' }).status(400);
-        if (!key) return res.json({ ok: false, message: 'Keyword missing' }).status(400);
-        if (!page) return res.json({ ok: false, message: 'Page missing' }).status(400);
+        if (!board) return res.status(400).json({ ok: false, message: 'Board missing' });
+        if (!cat) return res.status(400).json({ ok: false, message: 'Category missing' });
+        if (!key) return res.status(400).json({ ok: false, message: 'Keyword missing' });
+        if (!page) return res.status(400).json({ ok: false, message: 'Page missing' });
 
         const pageSize = 20;
         const lastNum = pageSize * (parseInt(page as string) - 1);
@@ -104,12 +104,12 @@ export const searchBoard = async (req: Request<{}, {}, {}, { board: 'free' | 'qn
             ])
         };
 
-        if(!result.length) return res.json({ok: false, message: 'Not Found'}).status(404)
+        if(!result.length) return res.status(404).json({ok: false, message: 'Not Found'});
         
-        return res.json({ ok: true, data: result, boardsCount: boardCount, allCounts }).status(200);
+        return res.status(200).json({ ok: true, data: result, boardsCount: boardCount, allCounts });
 
 } catch (err) {
     console.error(`[GET] /api/search`, err);
-    return res.json({ ok: false, message: 'Internel Server Error' }).status(500);
+    return res.status(500).json({ ok: false, message: 'Internel Server Error' });
 }
 }

@@ -14,10 +14,10 @@ export const getAllUsers: RequestHandler = async (req, res) => {
                 created_at: true,
             }
         });
-        return res.json({ok: true, data: result}).status(200);
+        return res.status(200).json({ok: true, data: result});
     } catch (err) {
         console.log(`[GET] /api/users`, err);
-        return res.json({ok: false, message: 'Internel Server Error'}).status(500);
+        return res.status(500).json({ok: false, message: 'Internel Server Error'});
     }
 };
 
@@ -31,7 +31,7 @@ export const getUserInfo: RequestHandler = async (req, res) => {
         const { authorization: token } = req.headers;
         const { no } = verifyToken(token as string) as JwtPayloadWithUserInfo;
 
-        if(!no) return res.json({ok: false, message: 'User No missing'}).status(400);
+        if(!no) return res.status(400).json({ok: false, message: 'User No missing'});
 
         const query = {
             where: {
@@ -65,13 +65,13 @@ export const getUserInfo: RequestHandler = async (req, res) => {
             })
         ]);
 
-        if(!userInfo) return res.json({ok: false, message: 'Cannot find User'}).status(404);
+        if(!userInfo) return res.status(404).json({ok: false, message: 'Cannot find User'});
 
-        return res.json({ok: true, data: userInfo, freeBoardCount, qnaBoardCount, freeCommentCount, qnaCommentCount}).status(200);
+        return res.status(200).json({ok: true, data: userInfo, freeBoardCount, qnaBoardCount, freeCommentCount, qnaCommentCount});
 
     } catch (err) {
         console.error(`[GET] /api/users/no`, err);
-        return res.json({ok: false, message: 'Internel Server Error'}).status(500);
+        return res.status(500).json({ok: false, message: 'Internel Server Error'});
     }
 };
 
@@ -88,7 +88,7 @@ export const modifyUserNick: RequestHandler = async(req, res) => {
 
         const { nick }: ModifyUserNickDito = req.body;
 
-        if(!nick) return res.json({ok: false, message: 'NICK missing'}).status(400);
+        if(!nick) return res.status(400).json({ok: false, message: 'NICK missing'});
         
         const { id, no } = verifyToken(token as string) as JwtPayloadWithUserInfo;
 
@@ -98,12 +98,12 @@ export const modifyUserNick: RequestHandler = async(req, res) => {
             }
         });
 
-        if(!user) return res.json({ok: false, message: 'Cannot find User'}).status(400);
+        if(!user) return res.status(400).json({ok: false, message: 'Cannot find User'});
 
         // 토큰의 id에서 가져온 회원 번호와 params의 회원 번호 일치 확인
         const checkIdAndNo = user.no === no;
         console.log(user.no, no, checkIdAndNo);
-        if(!checkIdAndNo) return res.json({ok: false, message: 'Unauthorized'}).status(401);
+        if(!checkIdAndNo) return res.status(401).json({ok: false, message: 'Unauthorized'});
 
         const result = await db.user.update({
             where: {
@@ -119,10 +119,10 @@ export const modifyUserNick: RequestHandler = async(req, res) => {
             }
         });
 
-        return res.json({ok: true, data: result}).status(201);
+        return res.status(201).json({ok: true, data: result});
         
     } catch (err) {
         console.error(`[PATCH] /api/users/no`, err);
-        return res.json({ok: false, message: 'Internel Server Error'}).status(500);
+        return res.status(500).json({ok: false, message: 'Internel Server Error'});
     }
 };

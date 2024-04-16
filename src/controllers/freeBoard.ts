@@ -50,13 +50,13 @@ export const boardGetAll: RequestHandler = async (req, res) => {
             })
         ]);
 
-        if(boardsCount === 0) return res.json({ok: false, message: 'Not Found'}).status(404);
+        if(boardsCount === 0) return res.status(404).json({ok: false, message: 'Not Found'});
 
-        return res.json({ok: true, data: boards, boardsCount, allCounts}).status(200);
+        return res.status(200).json({ok: true, data: boards, boardsCount, allCounts});
 
     } catch (err) {
         console.error(`[GET] /api/board/free`, err);
-        return res.json({ok: false, message: 'Internel Server Error'}).status(500);
+        return res.status(500).json({ok: false, message: 'Internel Server Error'});
     }
 }
 
@@ -70,7 +70,7 @@ export const boardGetOne: RequestHandler = async(req, res) => {
     try {
         const { no } = req.params;
         
-        if(!no) return res.json({ok: false, message: 'Board No missing'}).status(400);
+        if(!no) return res.status(400).json({ok: false, message: 'Board No missing'});
 
         const board = await db.free_board.findFirst({
             where: {
@@ -103,12 +103,12 @@ export const boardGetOne: RequestHandler = async(req, res) => {
             }
         });
 
-        if(!board) return res.json({ok: false, message: 'Not Found'}).status(404);
+        if(!board) return res.status(404).json({ok: false, message: 'Not Found'});
 
         return res.json({ok: true, data: board}).status(200);
     } catch (err) {
         console.error(`[GET] /api/board/free/{no}`, err);
-        return res.json({ok: false, message: 'Internel Server Error'}).status(500)
+        return res.status(500).json({ok: false, message: 'Internel Server Error'});
     }
 }
 
@@ -126,8 +126,8 @@ export const boardWrite: RequestHandler = async(req, res) => {
         const { authorization: token } = req.headers;
         const { no } = verifyToken(token as string) as JwtPayloadWithUserInfo;
     
-        if(!title) return res.json({ok: false, message: 'TITLE missing'}).status(400);
-        if(!content) return res.json({ok: false, message: 'CONTENT missing'}).status(400);
+        if(!title) return res.status(400).json({ok: false, message: 'TITLE missing'});
+        if(!content) return res.status(400).json({ok: false, message: 'CONTENT missing'});
     
         const board = await db.free_board.create({
             data: {
@@ -146,11 +146,11 @@ export const boardWrite: RequestHandler = async(req, res) => {
             }
         });
     
-        return res.json({ok: true, data: board}).status(201);
+        return res.status(201).json({ok: true, data: board});
 
     } catch (err) {
         console.log(`[POST] /api/board/free`, err);
-        return res.json({ok: false, message: 'Internel Server Error'}).status(500);
+        return res.status(500).json({ok: false, message: 'Internel Server Error'});
     }
 };
 
@@ -159,10 +159,10 @@ export const boardModify: RequestHandler = async (req, res) => {
         const { no: boardNo } = req.params;
         const { title, content }: BoardWriteModifyDto = req.body;
 
-        if(!boardNo) return res.json({ok: false, message: 'Board No missing'}).status(400);
+        if(!boardNo) return res.status(400).json({ok: false, message: 'Board No missing'});
 
-        if(!title) return res.json({ok: false, message: 'TITLE missing'}).status(400);
-        if(!content) return res.json({ok: false, message: 'CONTENT missing'}).status(400);
+        if(!title) return res.status(400).json({ok: false, message: 'TITLE missing'});
+        if(!content) return res.status(400).json({ok: false, message: 'CONTENT missing'});
 
         const { authorization: token } = req.headers;
         const { no: userNo } = verifyToken(token as string) as JwtPayloadWithUserInfo;
@@ -173,11 +173,11 @@ export const boardModify: RequestHandler = async (req, res) => {
             }
         });
 
-        if(!board) return res.json({ok: false, message: `Cannot find Board with ${boardNo}`}).status(404);
+        if(!board) return res.status(404).json({ok: false, message: `Cannot find Board with ${boardNo}`});
 
         const checkAuthor = userNo === board.author_no;
         
-        if(!checkAuthor) return res.json({ok: false, message: 'No Author'}).status(400);
+        if(!checkAuthor) return res.status(400).json({ok: false, message: 'No Author'});
 
         const modifiedBoard = await db.free_board.update({
             where: {
@@ -189,11 +189,11 @@ export const boardModify: RequestHandler = async (req, res) => {
             }
         });
 
-        return res.json({ok: true, data: modifiedBoard}).status(200);
+        return res.status(200).json({ok: true, data: modifiedBoard});
 
     } catch (err) {
         console.error(`[PATCH] /api/board/free/{no}`, err);
-        return res.json({ok: false, message: 'Internel Server Error'}).status(500);
+        return res.status(500).json({ok: false, message: 'Internel Server Error'});
     }
 };
 
@@ -206,7 +206,7 @@ export const boardModify: RequestHandler = async (req, res) => {
 export const boardDelete: RequestHandler = async (req, res) => {
     try {
         const { no: boardNo } = req.params;
-        if(!boardNo) return res.json({ok: false, message: 'Board No missing'}).status(400);
+        if(!boardNo) return res.status(400).json({ok: false, message: 'Board No missing'});
 
         const { authorization: token } = req.headers;
         const { no: userNo } = verifyToken(token as string) as JwtPayloadWithUserInfo;
@@ -217,11 +217,11 @@ export const boardDelete: RequestHandler = async (req, res) => {
             }
         });
 
-        if(!board) return res.json({ok: false, message: `Cannot find Board with ${boardNo}`}).status(404);
+        if(!board) return res.status(404).json({ok: false, message: `Cannot find Board with ${boardNo}`});
 
         const checkAuthor = userNo === board.author_no;
         
-        if(!checkAuthor) return res.json({ok: false, message: 'No Author'}).status(400);
+        if(!checkAuthor) return res.status(400).json({ok: false, message: 'No Author'});
 
         await db.free_board.delete({
             where: {
@@ -229,9 +229,9 @@ export const boardDelete: RequestHandler = async (req, res) => {
             }
         });
 
-        return res.json({ok: true}).status(200);
+        return res.status(200).json({ok: true});
     } catch (err) {
         console.error(`[DELETE] /api/board/free/{no}`, err);
-        return res.json({ok: false, message: 'Internel Server Error'}).status(500);
+        return res.status(500).json({ok: false, message: 'Internel Server Error'});
     }
 }

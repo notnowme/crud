@@ -24,14 +24,14 @@ export const checkId: RequestHandler = async (req, res, next) => {
         });
 
         if (result) {
-            return res.json({ ok: false, message: 'ID exists!' }).status(409);
+            return res.status(409).json({ ok: false, message: 'ID exists!' });
         }
 
         return next();
 
     } catch (err) {
         console.error(`checkId`, err);
-        return res.json({ ok: false, message: 'Internel Server Error' }).status(500);
+        return res.status(500).json({ ok: false, message: 'Internel Server Error' });
     }
 }
 
@@ -41,8 +41,8 @@ export const checkId: RequestHandler = async (req, res, next) => {
 export const checkNick: RequestHandler = async (req, res, next) => {
     try {
         const { nick }: CheckNickDto = req.body;
-
-        if (!nick) return res.json({ ok: false, message: 'NICK missing' }).status(400);
+        console.log(nick);
+        if (!nick) return res.status(400).json({ ok: false, message: 'NICK missing' });
 
         const result = await db.user.findFirst({
             where: {
@@ -50,13 +50,13 @@ export const checkNick: RequestHandler = async (req, res, next) => {
             }
         });
 
-        if (result) return res.json({ ok: false, message: 'NICK exists!' }).status(409);
+        if (result) return res.status(409).json({ ok: false, message: 'NICK exists!' });
 
         return next();
 
     } catch (err) {
         console.error(`checkNick`, err);
-        return res.json({ ok: false, message: 'Internel Server Error' }).status(500);
+        return res.status(500).json({ ok: false, message: 'Internel Server Error' });
     }
 }
 
@@ -65,9 +65,10 @@ export const checkNick: RequestHandler = async (req, res, next) => {
  */
 export const authJoin: RequestHandler = async (req, res) => {
     try {
+        console.log('hi');
         const { id, nick, password }: AuthJoinDto = req.body;
 
-        if (!password) return res.json({ ok: false, message: 'PASSWORD missing' }).status(400);
+        if (!password) return res.status(400).json({ ok: false, message: 'PASSWORD missing' });
 
         const saltRounds = 10;
         const salt = await bcrypt.genSalt(saltRounds);
@@ -81,11 +82,11 @@ export const authJoin: RequestHandler = async (req, res) => {
             }
         });
 
-        return res.json({ ok: true }).status(201);
+        return res.status(201).json({ ok: true });
 
     } catch (err) {
         console.error(`[POST] /api/auth/local/join]`, err);
-        return res.json({ ok: false, message: 'Internel Server Error' }).status(500);
+        return res.status(500).json({ ok: false, message: 'Internel Server Error' });
     }
 };
 
@@ -107,7 +108,7 @@ export const authWithdraw: RequestHandler = async (req, res) => {
             }
         });
 
-        if (!user) return res.json({ ok: false, message: 'Cannot find User' }).status(404);
+        if (!user) return res.status(404).json({ ok: false, message: 'Cannot find User' });
 
         await db.user.delete({
             where: {
@@ -115,11 +116,11 @@ export const authWithdraw: RequestHandler = async (req, res) => {
             }
         });
 
-        return res.json({ ok: true }).status(200);
+        return res.status(200).json({ ok: true });
 
     } catch (err) {
         console.error(`[POST] /api/local/withdraw`, err);
-        return res.json({ ok: false, message: 'Internel Server Error' }).status(500);
+        return res.status(500).json({ ok: false, message: 'Internel Server Error' });
     }
 }
 
@@ -130,8 +131,8 @@ export const authLogin: RequestHandler = async (req, res) => {
     try {
         const { id, password }: AuthLoginDto = req.body;
 
-        if (!id) return res.json({ ok: false, message: 'ID missing' }).status(400);
-        if (!password) return res.json({ ok: false, message: 'PASSWORD missing' }).status(400);
+        if (!id) return res.status(400).json({ ok: false, message: 'ID missing' });
+        if (!password) return res.status(400).json({ ok: false, message: 'PASSWORD missing' });
 
         const user = await db.user.findFirst({
             where: {
@@ -139,13 +140,13 @@ export const authLogin: RequestHandler = async (req, res) => {
             }
         });
 
-        if (!user) return res.json({ ok: false, message: `Cannot find User` }).status(404);
+        if (!user) return res.status(404).json({ ok: false, message: `Cannot find User` });
 
         // 비밀번호 일치 확인
         const check = await bcrypt.compare(password, user.password);
 
         if (!check) {
-            return res.json({ ok: false, message: 'Wrong Password' }).status(200);
+            return res.status(401).json({ ok: false, message: 'Wrong Password' });
         }
 
         let result: UserInfoWithToken = {
@@ -162,11 +163,11 @@ export const authLogin: RequestHandler = async (req, res) => {
             token
         }
 
-        return res.json({ok: true, data: result}).status(200);
+        return res.status(200).json({ok: true, data: result});
 
     } catch (err) {
         console.error(`[POST] /api/auth/login`, err);
-        return res.json({ ok: false, message: 'Internel Server Error' }).status(500);
+        return res.status(500).json({ ok: false, message: 'Internel Server Error' });
     }
 };
 
@@ -176,5 +177,5 @@ export const authLogin: RequestHandler = async (req, res) => {
 export const authLogout: RequestHandler = (req, res) => {
     // jwt를 블랙리스트에 등록.
     // 로그아웃 처리 추가...
-    return res.json({ ok: true }).status(200);
+    return res.status(200).json({ ok: true });
 }

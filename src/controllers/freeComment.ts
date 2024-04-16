@@ -11,8 +11,8 @@ export const commentFreeWrite: RequestHandler = async (req, res) => {
         const { authorization: token } = req.headers;
         const { boardNo, content }: CommentWriteDto = req.body;
 
-        if(!boardNo) return res.json({ok: false, message: 'Board No missing'}).status(400);
-        if(!content) return res.json({ok: false, message: 'CONTENT missing'}).status(400);
+        if(!boardNo) return res.status(400).json({ok: false, message: 'Board No missing'});
+        if(!content) return res.status(400).json({ok: false, message: 'CONTENT missing'});
 
         const board = await db.free_board.findFirst({
             where: {
@@ -20,7 +20,7 @@ export const commentFreeWrite: RequestHandler = async (req, res) => {
             }
         });
 
-        if(!board) return res.json({ok: false, message: 'Not Found'}).status(404);
+        if(!board) return res.status(404).json({ok: false, message: 'Not Found'});
 
         const { no: userNo } = verifyToken(token as string) as JwtPayloadWithUserInfo;
 
@@ -40,11 +40,11 @@ export const commentFreeWrite: RequestHandler = async (req, res) => {
             }
         });
 
-        return res.json({ok: true, data: comment}).status(201);
+        return res.status(201).json({ok: true, data: comment});
 
     } catch (err) {
         console.error(`[POST] /api/comment/free`, err);
-        return res.json({ok: false, message: 'Internel Server Error'}).status(500);
+        return res.status(500).json({ok: false, message: 'Internel Server Error'});
     }
 
 };
@@ -55,9 +55,9 @@ export const commentFreeModify: RequestHandler = async (req, res) => {
         const { authorization: token } = req.headers;
         const { content }: CommentWriteDto = req.body;
 
-        if(!cmtNo) return res.json({ok: false, message: 'Comment No missing'}).status(400);
+        if(!cmtNo) return res.status(400).json({ok: false, message: 'Comment No missing'});
     
-        if(!content) return res.json({ok: false, message: 'CONTENT missing'}).status(400);
+        if(!content) return res.status(400).json({ok: false, message: 'CONTENT missing'});
 
         const { no: userNo } = verifyToken(token as string) as JwtPayloadWithUserInfo;
         const comment = await db.free_comment.findFirst({
@@ -66,11 +66,11 @@ export const commentFreeModify: RequestHandler = async (req, res) => {
             }
         });
         
-        if(!comment) return res.json({ok: false, message: 'Not Found'}).status(404);
+        if(!comment) return res.status(404).json({ok: false, message: 'Not Found'});
 
         const checkAuthor = userNo === comment.author_no;
 
-        if(!checkAuthor) return res.json({ok: false, message: 'No Author'}).status(400);
+        if(!checkAuthor) return res.status(400).json({ok: false, message: 'No Author'});
 
         const modifiedComment = await db.free_comment.update({
             where: {
@@ -81,11 +81,11 @@ export const commentFreeModify: RequestHandler = async (req, res) => {
             }
         });
 
-        return res.json({ok: true, data: modifiedComment}).status(200);
+        return res.status(200).json({ok: true, data: modifiedComment});
 
     } catch (err) {
         console.error(`[PATCH] /api/comment/free/{no}`, err);
-        return res.json({ok: false, message: 'Internel Server Error'}).status(500);
+        return res.status(500).json({ok: false, message: 'Internel Server Error'});
     }
 };
 
@@ -94,7 +94,7 @@ export const commentFreeDelete: RequestHandler = async(req, res) => {
         const { no: cmtNo } = req.params;
         const { authorization: token } = req.headers;
 
-        if(!cmtNo) return res.json({ok: false, message: 'Comment No missing'}).status(400);
+        if(!cmtNo) return res.status(400).json({ok: false, message: 'Comment No missing'});
 
         const { no: userNo } = verifyToken(token as string) as JwtPayloadWithUserInfo;
 
@@ -104,11 +104,11 @@ export const commentFreeDelete: RequestHandler = async(req, res) => {
             }
         });
         
-        if(!comment) return res.json({ok: false, message: 'Not Found'}).status(404);
+        if(!comment) return res.status(404).json({ok: false, message: 'Not Found'});
 
         const checkAuthor = userNo === comment.author_no;
 
-        if(!checkAuthor) return res.json({ok: false, message: 'No Author'}).status(400);
+        if(!checkAuthor) return res.status(400).json({ok: false, message: 'No Author'});
 
         await db.free_comment.delete({
             where: {
@@ -116,10 +116,10 @@ export const commentFreeDelete: RequestHandler = async(req, res) => {
             }
         });
 
-        return res.json({ok: true}).status(200);
+        return res.status(200).json({ok: true});
 
     } catch (err) {
         console.error(`[DELETE] /api/comment/free/{no}`, err);
-        return res.json({ok: false, message: 'Internel Server Error'}).status(500);
+        return res.status(500).json({ok: false, message: 'Internel Server Error'});
     }
 };

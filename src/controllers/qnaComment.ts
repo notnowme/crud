@@ -11,8 +11,8 @@ export const commentQnaWrite: RequestHandler = async (req, res) => {
         const { authorization: token } = req.headers;
         const { boardNo, content }: CommentWriteDto = req.body;
 
-        if(!boardNo) return res.json({ok: false, message: 'Board No missing'}).status(400);
-        if(!content) return res.json({ok: false, message: 'CONTENT missing'}).status(400);
+        if(!boardNo) return res.status(400).json({ok: false, message: 'Board No missing'});
+        if(!content) return res.status(400).json({ok: false, message: 'CONTENT missing'});
         
         const { no: userNo } = verifyToken(token as string) as JwtPayloadWithUserInfo;
 
@@ -32,11 +32,11 @@ export const commentQnaWrite: RequestHandler = async (req, res) => {
             }
         });
 
-        return res.json({ok: true, data: comment}).status(201);
+        return res.status(201).json({ok: true, data: comment});
 
     } catch (err) {
         console.error(`[POST] /api/comment/qna`, err);
-        return res.json({ok: false, message: 'Internel Server Error'}).status(500);
+        return res.status(500).json({ok: false, message: 'Internel Server Error'});
     }
 
 };
@@ -47,9 +47,9 @@ export const commentQnaModify: RequestHandler = async (req, res) => {
         const { authorization: token } = req.headers;
         const { content }: CommentWriteDto = req.body;
 
-        if(!cmtNo) return res.json({ok: false, message: 'Comment No missing'}).status(400);
+        if(!cmtNo) return res.status(400).json({ok: false, message: 'Comment No missing'});
     
-        if(!content) return res.json({ok: false, message: 'CONTENT missing'}).status(400);
+        if(!content) return res.status(400).json({ok: false, message: 'CONTENT missing'});
 
         const { no: userNo } = verifyToken(token as string) as JwtPayloadWithUserInfo;
         const comment = await db.qna_comment.findFirst({
@@ -58,11 +58,11 @@ export const commentQnaModify: RequestHandler = async (req, res) => {
             }
         });
         
-        if(!comment) return res.json({ok: false, message: 'Not Found'}).status(404);
+        if(!comment) return res.status(404).json({ok: false, message: 'Not Found'});
 
         const checkAuthor = userNo === comment.author_no;
 
-        if(!checkAuthor) return res.json({ok: false, message: 'No Author'}).status(400);
+        if(!checkAuthor) return res.status(400).json({ok: false, message: 'No Author'});
 
         const modifiedComment = await db.qna_comment.update({
             where: {
@@ -73,11 +73,11 @@ export const commentQnaModify: RequestHandler = async (req, res) => {
             }
         });
 
-        return res.json({ok: true, data: modifiedComment}).status(200);
+        return res.status(200).json({ok: true, data: modifiedComment});
 
     } catch (err) {
         console.error(`[PATCH] /api/comment/qna/{no}`, err);
-        return res.json({ok: false, message: 'Internel Server Error'}).status(500);
+        return res.status(500).json({ok: false, message: 'Internel Server Error'});
     }
 };
 
@@ -86,7 +86,7 @@ export const commentQnaDelete: RequestHandler = async(req, res) => {
         const { no: cmtNo } = req.params;
         const { authorization: token } = req.headers;
 
-        if(!cmtNo) return res.json({ok: false, message: 'Comment No missing'}).status(400);
+        if(!cmtNo) return res.status(400).json({ok: false, message: 'Comment No missing'});
 
         const { no: userNo } = verifyToken(token as string) as JwtPayloadWithUserInfo;
 
@@ -96,11 +96,11 @@ export const commentQnaDelete: RequestHandler = async(req, res) => {
             }
         });
         
-        if(!comment) return res.json({ok: false, message: 'Not Found'}).status(404);
+        if(!comment) return res.status(404).json({ok: false, message: 'Not Found'});
 
         const checkAuthor = userNo === comment.author_no;
 
-        if(!checkAuthor) return res.json({ok: false, message: 'No Author'}).status(400);
+        if(!checkAuthor) return res.status(400).json({ok: false, message: 'No Author'});
 
         await db.qna_comment.delete({
             where: {
@@ -108,10 +108,10 @@ export const commentQnaDelete: RequestHandler = async(req, res) => {
             }
         });
 
-        return res.json({ok: true}).status(200);
+        return res.status(200).json({ok: true});
 
     } catch (err) {
         console.error(`[DELETE] /api/comment/qna/{no}`, err);
-        return res.json({ok: false, message: 'Internel Server Error'}).status(500);
+        return res.status(500).json({ok: false, message: 'Internel Server Error'});
     }
 };
