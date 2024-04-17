@@ -84,6 +84,7 @@ export const getUserInfo: RequestHandler = async (req, res) => {
 export const modifyUserNick: RequestHandler = async(req, res) => {
     // 인증 끝, 중복 끝.
     try {
+        console.log('??');
         const { authorization: token } = req.headers;
 
         const { nick }: ModifyUserNickDito = req.body;

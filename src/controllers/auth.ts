@@ -41,7 +41,7 @@ export const checkId: RequestHandler = async (req, res, next) => {
 export const checkNick: RequestHandler = async (req, res, next) => {
     try {
         const { nick }: CheckNickDto = req.body;
-        console.log(nick);
+
         if (!nick) return res.status(400).json({ ok: false, message: 'NICK missing' });
 
         const result = await db.user.findFirst({

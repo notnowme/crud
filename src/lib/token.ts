@@ -11,13 +11,13 @@ export const checkToken = async (req: Request, res: Response, next: NextFunction
         const { authorization: token } = req.headers;
 
         // 헤더에 토큰이 없으면 인증이 안 된 접근
-        if (!token) return res.json({ ok: false, message: 'Unauthorized' }).status(401);
+        if (!token) return res.status(401).json({ ok: false, message: 'Unauthorized' });
 
         const verifiedToken = verifyToken(token);
 
         // 디코딩 된 값이 string이면 만료됐거나 위조된 토큰
         if (typeof verifiedToken === 'string') {
-            return res.json({ ok: false, message: 'Invalid Token' }).status(401);
+            return res.status(401).json({ ok: false, message: 'Invalid Token' });
         };
 
         // jwt가 블랙리스트에 있는지 확인
@@ -28,13 +28,13 @@ export const checkToken = async (req: Request, res: Response, next: NextFunction
             }
         });
 
-        if (check) return res.json({ ok: false, message: 'Invalid Token' }).status(401);
+        if (check) return res.status(401).json({ ok: false, message: 'Invalid Token' });
 
         return next();
 
     } catch (err) {
         console.error(`[authToken]`, err);
-        return res.json({ ok: false, message: 'Internel Server Error' }).status(500);
+        return res.status(500).json({ ok: false, message: 'Internel Server Error' });
     }
 }
 
