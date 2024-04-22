@@ -41,8 +41,14 @@ export const boardGetAll: RequestHandler = async (req, res) => {
                             id: true,
                             nick: true
                         }
+                    },
+                    comments: {
+                        select: {
+                            author_no: true,
+                        },
+                        
                     }
-                }
+                },
             }),
             db.free_board.count({
                 take: query.take,

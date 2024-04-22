@@ -1,4 +1,5 @@
 import {
+    authCheckPassword,
     authJoin,
     authLogin,
     authLogout,
@@ -322,6 +323,8 @@ router.post('/check/id', checkId, (req, res) => {
 router.post('/check/nick', checkNick, (req, res) => {
     return res.status(200).json({ok: true});
 });
+
+router.post('/check/password', authCheckPassword);
 
 
 module.exports = router;

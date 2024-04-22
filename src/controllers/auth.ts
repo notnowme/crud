@@ -172,6 +172,40 @@ export const authLogin: RequestHandler = async (req, res) => {
 };
 
 /**
+ * 탈퇴 시 비밀번호 확인
+ */
+
+export const authCheckPassword: RequestHandler = async (req, res) => {
+    try {
+        const { id, password }: AuthLoginDto = req.body;
+
+        if (!id) return res.status(400).json({ ok: false, message: 'ID missing' });
+        if (!password) return res.status(400).json({ ok: false, message: 'PASSWORD missing' });
+
+        const user = await db.user.findFirst({
+            where: {
+                id
+            }
+        });
+
+        if (!user) return res.status(404).json({ ok: false, message: `Cannot find User` });
+
+        // 비밀번호 일치 확인
+        const check = await bcrypt.compare(password, user.password);
+
+        if (!check) {
+            return res.status(401).json({ ok: false, message: 'Wrong Password' });
+        }
+
+        return res.status(200).json({ok: true});
+
+    } catch (err) {
+        console.error(`[POST] /api/auth/check/password`, err);
+        return res.status(500).json({ ok: false, message: 'Internel Server Error' });
+    }
+}
+
+/**
  * 로그아웃
  */
 export const authLogout: RequestHandler = (req, res) => {
