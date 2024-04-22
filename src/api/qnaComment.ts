@@ -1,6 +1,6 @@
 import express from "express";
 import { checkToken } from "../lib/token";
-import { commentQnaDelete, commentQnaModify, commentQnaWrite } from "../controllers/qnaComment";
+import { commentQnaDelete, commentQnaModify, commentQnaRead, commentQnaWrite } from "../controllers/qnaComment";
 
 const router = express.Router();
 
@@ -323,6 +323,7 @@ router.post('/', checkToken, commentQnaWrite);
  *                                   example: Internel Server Error
  */
 router
+    .get('/:no', commentQnaRead)
     .patch('/:no', checkToken, commentQnaModify)
     .delete('/:no', checkToken, commentQnaDelete);
 

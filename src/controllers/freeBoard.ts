@@ -17,7 +17,7 @@ export const boardGetAll: RequestHandler = async (req, res) => {
         let { page } = req.query;
 
         if(!page) {
-            return res.json({ok: false, message: 'Page No missing'}).status(400);
+            return res.status(400).json({ok: false, message: 'Page No missing'});
         }
         
         const allCounts = await db.free_board.count();

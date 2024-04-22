@@ -5,6 +5,24 @@ import { JwtPayloadWithUserInfo } from "../types/global";
 import { db } from "../lib/db";
 import { CommentWriteDto } from "../interfaces/comment";
 
+export const commentQnaRead: RequestHandler = async (req, res) => {
+    try {
+        const { no: cmtNo } = req.params;
+        if(!cmtNo) return res.status(400).json({ok: false, message: 'Comment No missing'});
+
+        const comment = await db.qna_comment.findFirst({
+            where: {
+                no: parseInt(cmtNo)
+            }
+        });
+        if(!comment) return res.status(404).json({ok: false, message: 'Cannot find a Comment'});
+        return res.status(200).json({ok: true, data: comment});
+    } catch (err) {
+        console.error(`[GET] /api/comment/qna/no`, err);
+        return res.status(500).json({ok: false, message: 'Internel Server Error'});
+    }
+}
+
 export const commentQnaWrite: RequestHandler = async (req, res) => {
     
     try {

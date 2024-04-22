@@ -1,6 +1,6 @@
 import express from "express";
 import { checkToken } from "../lib/token";
-import { commentFreeDelete, commentFreeModify, commentFreeWrite } from "../controllers/freeComment";
+import { commentFreeDelete, commentFreeModify, commentFreeRead, commentFreeWrite } from "../controllers/freeComment";
 
 const router = express.Router();
 
@@ -323,6 +323,7 @@ router.post('/', checkToken, commentFreeWrite);
  *                                   example: Internel Server Error
  */
 router
+    .get('/:no', commentFreeRead)
     .patch('/:no', checkToken, commentFreeModify)
     .delete('/:no', checkToken, commentFreeDelete);
 
