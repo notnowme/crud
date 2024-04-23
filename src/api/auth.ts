@@ -317,11 +317,11 @@ router.post('/login', authLogin); // 로그인
 router.post('/logout', checkToken, jwtToBlack, authLogout); // 로그아웃
 
 router.post('/check/id', checkId, (req, res) => {
-    return res.status(200).json({ok: true});
+    return res.status(200).json({ok: true, message: ''});
 });
 
 router.post('/check/nick', checkNick, (req, res) => {
-    return res.status(200).json({ok: true});
+    return res.status(200).json({ok: true, message: ''});
 });
 
 router.post('/check/password', authCheckPassword);

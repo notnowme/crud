@@ -82,7 +82,7 @@ export const authJoin: RequestHandler = async (req, res) => {
             }
         });
 
-        return res.status(201).json({ ok: true });
+        return res.status(201).json({ ok: true, message: '' });
 
     } catch (err) {
         console.error(`[POST] /api/auth/local/join]`, err);
@@ -116,7 +116,7 @@ export const authWithdraw: RequestHandler = async (req, res) => {
             }
         });
 
-        return res.status(200).json({ ok: true });
+        return res.status(200).json({ ok: true, message: '' });
 
     } catch (err) {
         console.error(`[POST] /api/local/withdraw`, err);
