@@ -19,15 +19,16 @@ export const boardGetAll: RequestHandler = async (req, res) => {
         if(!page) {
             return res.status(400).json({ok: false, message: 'Page No missing'});
         }
-        
+
         const allCounts = await db.free_board.count();
         const pageSize = 20;
         const lastNum = pageSize * (parseInt(page as string) - 1);
 
         const query: Prisma.Free_boardFindManyArgs = {
             take: pageSize,
-            skip: lastNum <= 20 ? 0 : lastNum,
+            skip: lastNum < 20 ? 0 : lastNum,
         }
+
         const [boards, boardsCount] = await db.$transaction([
             db.free_board.findMany({
                 take: query.take,
@@ -92,6 +93,7 @@ export const boardGetOne: RequestHandler = async(req, res) => {
                 comments: {
                     select: {
                         no: true,
+                        board_no: true,
                         content: true,
                         created_at: true,
                         updated_at: true,
@@ -103,7 +105,7 @@ export const boardGetOne: RequestHandler = async(req, res) => {
                         }
                     },
                     orderBy: {
-                        no: 'desc'
+                        no: 'asc'
                     }
                 }
             }

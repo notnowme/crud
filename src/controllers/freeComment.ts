@@ -97,7 +97,7 @@ export const commentFreeModify: RequestHandler = async (req, res) => {
             },
             data: {
                 content
-            }
+            },
         });
 
         return res.status(200).json({ok: true, data: modifiedComment});
