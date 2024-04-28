@@ -44,6 +44,11 @@ export const searchBoard = async (req: Request<{}, {}, {}, { board: 'free' | 'qn
                             id: true,
                             nick: true
                         }
+                    },
+                    comments: {
+                        select: {
+                            author_no: true,
+                        }
                     }
                 }
             }
@@ -60,6 +65,11 @@ export const searchBoard = async (req: Request<{}, {}, {}, { board: 'free' | 'qn
                             no: true,
                             id: true,
                             nick: true
+                        }
+                    },
+                    comments: {
+                        select: {
+                            author_no: true,
                         }
                     }
                 }
@@ -98,7 +108,7 @@ export const searchBoard = async (req: Request<{}, {}, {}, { board: 'free' | 'qn
                 }),
                 db.qna_board.count({
                     take: pageSize,
-                    skip: lastNum <= 20 ? 0 : lastNum,
+                    skip: lastNum < 20 ? 0 : lastNum,
                     where: query.where,
                 })
             ])
