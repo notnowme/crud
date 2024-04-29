@@ -8,6 +8,11 @@ import { db } from "./db";
  */
 export const checkToken = async (req: Request, res: Response, next: NextFunction) => {
     try {
+        await new Promise((resolve, reject) => {
+            setTimeout(() => {
+                resolve('done');
+            }, 2000);
+        });
         const { authorization: token } = req.headers;
 
         // 헤더에 토큰이 없으면 인증이 안 된 접근

@@ -81,7 +81,7 @@ export const searchBoard = async (req: Request<{}, {}, {}, { board: 'free' | 'qn
             [result, boardCount] = await db.$transaction([
                 db.free_board.findMany({
                     take: pageSize,
-                    skip: lastNum <= 20 ? 0 : lastNum,
+                    skip: lastNum < 20 ? 0 : lastNum,
                     where: query.where,
                     include: query.include,
                     orderBy: {
@@ -90,7 +90,7 @@ export const searchBoard = async (req: Request<{}, {}, {}, { board: 'free' | 'qn
                 }),
                 db.free_board.count({
                     take: pageSize,
-                    skip: lastNum <= 20 ? 0 : lastNum,
+                    skip: lastNum < 20 ? 0 : lastNum,
                     where: query.where,
                 })
             ])
@@ -99,7 +99,7 @@ export const searchBoard = async (req: Request<{}, {}, {}, { board: 'free' | 'qn
             [result, boardCount] = await db.$transaction([
                 db.qna_board.findMany({
                     take: pageSize,
-                    skip: lastNum <= 20 ? 0 : lastNum,
+                    skip: lastNum < 20 ? 0 : lastNum,
                     where: query.where,
                     include: query.include,
                     orderBy: {

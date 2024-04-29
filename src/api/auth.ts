@@ -326,5 +326,9 @@ router.post('/check/nick', checkNick, (req, res) => {
 
 router.post('/check/password', authCheckPassword);
 
+router.post('/token', checkToken, (req, res) => {
+    return res.status(200).json({ok: true, message: ''});
+})
+
 
 module.exports = router;

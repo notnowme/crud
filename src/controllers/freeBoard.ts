@@ -47,7 +47,6 @@ export const boardGetAll: RequestHandler = async (req, res) => {
                         select: {
                             author_no: true,
                         },
-                        
                     }
                 },
             }),

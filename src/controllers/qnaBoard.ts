@@ -26,7 +26,7 @@ export const boardGetAll: RequestHandler = async (req, res) => {
 
         const query: Prisma.Qna_boardFindManyArgs = {
             take: pageSize,
-            skip: lastNum <= 20 ? 0 : lastNum,
+            skip: lastNum < 20 ? 0 : lastNum,
         }
         const [boards, boardsCount] = await db.$transaction([
             db.qna_board.findMany({
@@ -41,6 +41,11 @@ export const boardGetAll: RequestHandler = async (req, res) => {
                             id: true,
                             nick: true
                         }
+                    },
+                    comments: {
+                        select: {
+                            author_no: true,
+                        },
                     }
                 }
             }),
@@ -86,6 +91,7 @@ export const boardGetOne: RequestHandler = async(req, res) => {
                 comments: {
                     select: {
                         no: true,
+                        board_no: true,
                         content: true,
                         created_at: true,
                         updated_at: true,
@@ -97,7 +103,7 @@ export const boardGetOne: RequestHandler = async(req, res) => {
                         }
                     },
                     orderBy: {
-                        no: 'desc'
+                        no: 'asc'
                     }
                 }
             }
