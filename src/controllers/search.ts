@@ -77,7 +77,9 @@ export const searchBoard = async (req: Request<{}, {}, {}, { board: 'free' | 'qn
         }
 
         if (board === 'free') {
-            allCounts = await db.free_board.count();
+            allCounts = await db.free_board.count({
+                where: query.where,
+            });
             [result, boardCount] = await db.$transaction([
                 db.free_board.findMany({
                     take: pageSize,
@@ -95,7 +97,9 @@ export const searchBoard = async (req: Request<{}, {}, {}, { board: 'free' | 'qn
                 })
             ])
         } else {
-            allCounts = await db.qna_board.count();
+            allCounts = await db.qna_board.count({
+                where: query.where,
+            });
             [result, boardCount] = await db.$transaction([
                 db.qna_board.findMany({
                     take: pageSize,
