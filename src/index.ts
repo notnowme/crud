@@ -61,6 +61,10 @@ app.use('/api/comment/qna', apiQnaComment);
 const apiSearch = require("./api/search");
 app.use('/api/search', apiSearch);
 
+// recent 라우터
+const apiRecent = require("./api/recent");
+app.use('/api/recent', apiRecent);
+
 
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
     console.error('index', err);
