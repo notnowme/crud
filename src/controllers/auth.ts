@@ -197,7 +197,7 @@ export const authCheckPassword: RequestHandler = async (req, res) => {
             return res.status(401).json({ ok: false, message: 'Wrong Password' });
         }
 
-        return res.status(200).json({ok: true});
+        return res.status(200).json({ok: true, message: ''});
 
     } catch (err) {
         console.error(`[POST] /api/auth/check/password`, err);
