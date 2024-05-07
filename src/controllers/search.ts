@@ -24,7 +24,7 @@ export const searchBoard = async (req: Request<{}, {}, {}, { board: 'free' | 'qn
         // 검색된 게시글 수
         let boardCount;
 
-        let result: SearchInfo<Free_board | Qna_board>[];
+        let result;
         
         // 더 효율적인 방법이 있다면 수정해야될 듯...
 

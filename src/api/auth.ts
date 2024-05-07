@@ -330,5 +330,7 @@ router.post('/token', checkToken, (req, res) => {
     return res.status(200).json({ok: true, message: ''});
 })
 
+router.post('/admin/add', checkToken, );
+
 
 module.exports = router;

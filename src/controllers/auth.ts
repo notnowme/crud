@@ -153,6 +153,7 @@ export const authLogin: RequestHandler = async (req, res) => {
             no: user.no,
             id: user.id,
             nick: user.nick,
+            role: user.role,
         }
 
         const token = signJwtAccessToken(result);
@@ -204,6 +205,24 @@ export const authCheckPassword: RequestHandler = async (req, res) => {
         return res.status(500).json({ ok: false, message: 'Internel Server Error' });
     }
 }
+
+
+export const authAdminAdd: RequestHandler = (req, res) => {
+    try {
+        const { authorization: token } = req.headers;
+
+        // 예외 처리 후 왔으므로, token 값도 있고, jwt 타입
+        const verifiedToken = verifyToken(token as string) as JwtPayloadWithUserInfo;
+
+        const { id } = verifiedToken;
+
+        
+
+    } catch (err) {
+        console.error(`[POST] /api/auth/admin/add`, err);
+        return res.status(500).json({ ok: false, message: 'Internel Server Error' });
+    }
+};
 
 /**
  * 로그아웃
